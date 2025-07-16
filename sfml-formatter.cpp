@@ -11,7 +11,7 @@ int main()
     sf::Font font;
     sf::Text header;
     sf::Text subtitle;
-
+   
     const sf::Vector2f SIZE_BTN(50.f, 30.f);
     
     std::vector<Button> buttons;
@@ -24,8 +24,7 @@ int main()
         buttons.push_back(button);
     }
 
-    std::vector<sf::RectangleShape> fieldsBack;
-    std::vector<sf::Text> fields;
+    vector<Button> fields;
     std::vector<sf::Text> fieldsName;
     int activeField = 0;
     string names[5] = { "mm", "sm", "dm", "m", "km" };
@@ -35,28 +34,18 @@ int main()
     const sf::Vector2f SIZE_FIELD(300.f, 30.f);
 
     for (int i = 0; i < 5; i++) {
-        sf::RectangleShape back(SIZE_FIELD);
-        sf::Text text;
+        Button field(SIZE_FIELD, "0", font);
         sf::Text textName;
-
-        text.setFont(font);
-        text.setCharacterSize(18);
-        text.setString("0");
-        text.setFillColor(sf::Color::Black);
 
         textName.setFont(font);
         textName.setCharacterSize(18);
         textName.setString(names[i]);
         textName.setFillColor(sf::Color::White);
 
-        back.setPosition(sf::Vector2f(65, (150)+(i*50)));
-        fieldsBack.push_back(back);
-        sf::Vector2f position = back.getPosition();
-        text.setPosition(sf::Vector2f(position.x + 15, position.y + 6));
+        field.setPosition(sf::Vector2f(65, (150) + (i * 50)));
+        fields.push_back(field);
         textName.setPosition(sf::Vector2f(0, (150) + (i * 50)));
-
         fieldsName.push_back(textName);
-        fields.push_back(text);
     }
 
     font.loadFromFile("./fonts/arialbd.ttf");
@@ -87,27 +76,27 @@ int main()
                             mousePosition.y >= buttons[i].getPosition().y &&
                             mousePosition.y <= buttons[i].getPosition().y + SIZE_BTN.y) {
                             buttons[i].on();
-                            auto currentString = fields[activeField].getString();
+                            auto currentString = fields[activeField].getText();
                             if (i == 10) {
-                                fields[activeField].setString(currentString + ".");
+                                fields[activeField].setText(currentString + ".");
                             }
                             else if (i == 11) {
-                                fields[activeField].setString("0");
+                                fields[activeField].setText("0");
                             }
                             else {
                                 auto num = buttons[i].getText().toAnsiString();
                                 
-                                auto currentNum = std::stod(fields[activeField].getString().toAnsiString());
+                                auto currentNum = std::stod(fields[activeField].getText().toAnsiString());
                                 if (currentNum == 0) currentString = "";
-                                fields[activeField].setString(currentString + num);
+                                fields[activeField].setText(currentString + num);
                             }
                         }
                     }
-                    for (int i = 0; i < fieldsBack.size(); i++) {
-                        if (mousePosition.x >= fieldsBack[i].getPosition().x &&
-                            mousePosition.x <= fieldsBack[i].getPosition().x + SIZE_FIELD.x &&
-                            mousePosition.y >= fieldsBack[i].getPosition().y &&
-                            mousePosition.y <= fieldsBack[i].getPosition().y + SIZE_FIELD.y) {
+                    for (int i = 0; i < fields.size(); i++) {
+                        if (mousePosition.x >= fields[i].getPosition().x &&
+                            mousePosition.x <= fields[i].getPosition().x + SIZE_FIELD.x &&
+                            mousePosition.y >= fields[i].getPosition().y &&
+                            mousePosition.y <= fields[i].getPosition().y + SIZE_FIELD.y) {
                             activeField = i;
                         }
                     }
@@ -119,21 +108,19 @@ int main()
                 }
             }
         }
-        auto activeNumber = std::stod(fields[activeField].getString().toAnsiString());
+        auto activeNumber = std::stod(fields[activeField].getText().toAnsiString());
         for (int i = activeField-1, index=10; i >= 0; i--, index*=10) {
-            fields[i].setString(std::to_string(activeNumber * index));
+            fields[i].setText(std::to_string(activeNumber * index));
         }
         for (int i = activeField + 1, index = 10; i < fields.size(); i++, index *= 10) {
-            fields[i].setString(std::to_string(activeNumber / index));
+            fields[i].setText(std::to_string(activeNumber / index));
         }
 
-        for (int i = 0; i < fieldsBack.size(); i++) {
-            fieldsBack[i].setFillColor(sf::Color::White);
-            fields[i].setFillColor(sf::Color::Black);
+        for (int i = 0; i < fields.size(); i++) {
+            fields[i].off();
         }
 
-        fieldsBack[activeField].setFillColor(sf::Color::Blue);
-        fields[activeField].setFillColor(sf::Color::White);
+        fields[activeField].on();
 
         window.clear();
         window.draw(header);
@@ -143,11 +130,8 @@ int main()
             window.draw(name);
         }
 
-        for (auto back : fieldsBack) {
-            window.draw(back);
-        }
         for (auto field : fields) {
-            window.draw(field);
+            field.draw(window);
         }
 
         for (auto btn : buttons) {
