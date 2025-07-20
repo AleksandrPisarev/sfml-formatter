@@ -3,11 +3,14 @@
 #include <vector>
 #include "windows.h"
 #include "Button.h"
+#include "Formatter.h"
 using namespace std;
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
+    Formatter formatter;
+    formatter.run();
+    /*sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
     sf::Font font;
     sf::Text header;
     sf::Text subtitle;
@@ -110,10 +113,20 @@ int main()
         }
         auto activeNumber = std::stod(fields[activeField].getText().toAnsiString());
         for (int i = activeField-1, index=10; i >= 0; i--, index*=10) {
-            fields[i].setText(std::to_string(activeNumber * index));
+            if (i == 3)
+            {
+                fields[i].setText(std::to_string(activeNumber * 1000));
+                activeNumber *= 1000;
+                index = 1;
+            }
+            else fields[i].setText(std::to_string(activeNumber * index));
         }
         for (int i = activeField + 1, index = 10; i < fields.size(); i++, index *= 10) {
-            fields[i].setText(std::to_string(activeNumber / index));
+            if (i == 4)
+            {
+                fields[i].setText(std::to_string((std::stod(fields[i - 1].getText().toAnsiString()) / 1000)));
+            }
+            else fields[i].setText(std::to_string(activeNumber / index));
         }
 
         for (int i = 0; i < fields.size(); i++) {
@@ -141,5 +154,5 @@ int main()
         window.display();
     }
 
-    return EXIT_SUCCESS;
+    return EXIT_SUCCESS;*/
 }
