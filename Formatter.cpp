@@ -1,8 +1,7 @@
 #include "Formatter.h"
 
-Formatter::Formatter()
+Formatter::Formatter(): window(sf::VideoMode(800, 600), "SFML window")
 {
-    sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
 	font.loadFromFile("./fonts/arialbd.ttf");
 
 	header.setFont(font);
